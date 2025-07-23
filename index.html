@@ -1,298 +1,236 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Anime Stream</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Photo Gallery</title>
+  <!-- Material Icons -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style>
-    * { box-sizing: border-box; }
-    body, html {
+    body {
       margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: #0b0c10;
-      color: #f5f5f5;
-    }
-    header, nav.bottom-nav {
-      backdrop-filter: blur(14px);
-      background: rgba(20, 20, 20, 0.7);
-      border-radius: 0 0 20px 20px;
-      position: fixed;
-      width: 100%;
-      z-index: 1000;
+      font-family: "Segoe UI", sans-serif;
+      background: #f9f9f9;
     }
     header {
-      top: 0;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 16px;
-      font-weight: bold;
-      font-size: 18px;
+      text-align: center;
+      padding: 1em;
+      font-size: 1.5em;
+      background: #ffffff;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
     }
-    nav.bottom-nav {
-      bottom: 0;
-      height: 60px;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      border-top: 1px solid #333;
-      border-radius: 20px 20px 0 0;
-    }
-    nav.bottom-nav button {
-      background: none;
-      border: none;
-      color: #bbb;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      font-size: 12px;
-      cursor: pointer;
-    }
-    nav.bottom-nav button.active,
-    nav.bottom-nav button:hover {
-      color: #4fc3f7;
-    }
-    .material-icons {
-      font-size: 24px;
-    }
-    main {
-      margin-top: 60px;
-      margin-bottom: 60px;
-      padding: 16px;
-    }
-    .tab-content {
-      display: none;
-    }
-    .tab-content.active {
-      display: block;
-    }
-    .video-grid {
+    .gallery {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 16px;
-    }
-    .video-card {
-      background: #1a1b1f;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 0 12px rgba(79,195,247,0.15);
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-    .video-card:hover {
-      transform: scale(1.03);
-    }
-    .thumbnail {
-      width: 100%;
-      height: 120px;
-      object-fit: cover;
-    }
-    .video-info {
+      gap: 10px;
       padding: 10px;
     }
-    .video-title {
-      font-weight: 600;
-      font-size: 14px;
-      margin: 0;
-    }
-    .video-description {
-      font-size: 12px;
-      color: #aaa;
-      margin: 4px 0 0 0;
-    }
-    .search-container {
-      margin-bottom: 16px;
-      display: flex;
-    }
-    #searchInput {
-      flex-grow: 1;
-      padding: 10px 12px;
-      font-size: 16px;
-      border-radius: 8px;
-      border: none;
-    }
-    .like-button {
-      font-size: 20px;
+    .card {
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       cursor: pointer;
-      color: #ccc;
-      float: right;
-      margin-top: 10px;
     }
-    .like-button.liked {
-      color: #ff4081;
-    }
-    #animeVideo {
+    .card img {
       width: 100%;
-      max-height: 60vh;
-      background: #000;
+      display: block;
+    }
+    .card .title {
+      padding: 10px;
+      font-size: 0.9em;
+    }
+    nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      background: white;
+      border-top: 1px solid #ddd;
+    }
+    nav button {
+      flex: 1;
+      padding: 1em;
+      background: none;
+      border: none;
+      font-size: 1.5em;
+      cursor: pointer;
+      color: #555;
+    }
+    nav button.active {
+      color: #1976d2;
+    }
+    #viewerPage {
+      display: none;
+      padding: 10px;
+    }
+    #viewerPage img {
+      width: 100%;
       border-radius: 10px;
     }
-    .player-controls {
-      margin-top: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .suggestions {
+      margin-top: 20px;
     }
-    .player-controls button {
-      background: #222;
+    .suggestions h3 {
+      margin-bottom: 10px;
+    }
+    .suggestions .gallery {
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+    .fav-btn {
+      background: none;
       border: none;
-      padding: 10px 16px;
-      color: #fff;
-      border-radius: 6px;
-      margin: 0 5px;
+      font-size: 1.2em;
+      cursor: pointer;
+      float: right;
+      color: #888;
+    }
+    .fav-btn.active {
+      color: red;
+    }
+    .searchBox {
+      padding: 10px;
+    }
+    .searchBox input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
     }
   </style>
 </head>
 <body>
-  <header>Anime Stream</header>  <main>
-    <section id="home" class="tab-content active">
-      <div id="homeGrid" class="video-grid"></div>
-    </section><section id="search" class="tab-content">
-  <div class="search-container">
-    <input type="text" id="searchInput" placeholder="Search anime..." oninput="searchVideos()">
+
+<header id="pageTitle">Photo Gallery</header>
+
+<div id="homeTab" class="tabPage">
+  <div class="gallery" id="homeGallery"></div>
+</div>
+
+<div id="searchTab" class="tabPage" style="display:none;">
+  <div class="searchBox"><input type="text" id="searchInput" placeholder="Search by title..." /></div>
+  <div class="gallery" id="searchResults"></div>
+</div>
+
+<div id="favouritesTab" class="tabPage" style="display:none;">
+  <div class="gallery" id="favouriteGallery"></div>
+</div>
+
+<div id="viewerPage">
+  <button onclick="backToHome()">← Back</button>
+  <h2 id="viewerTitle"></h2>
+  <img id="viewerImage" />
+  <button class="fav-btn" id="viewerFavBtn" onclick="toggleViewerFav()">♡</button>
+  <div class="suggestions">
+    <h3>Suggestions</h3>
+    <div class="gallery" id="suggestionsGallery"></div>
   </div>
-  <div id="searchResults" class="video-grid"></div>
-</section>
+</div>
 
-<section id="about" class="tab-content">
-  <h2>About</h2>
-  <p>Offline anime player built with HTML, CSS, and JavaScript.</p>
-  <h3>Your Favourites</h3>
-  <ul id="favouritesList"></ul>
-</section>
+<nav>
+  <button onclick="switchTab('home')" class="active"><span class="material-icons">home</span></button>
+  <button onclick="switchTab('search')"><span class="material-icons">search</span></button>
+  <button onclick="switchTab('favourites')"><span class="material-icons">favorite</span></button>
+</nav>
 
-<section id="videoPage" class="tab-content">
-  <h2 id="videoTitle"></h2>
-  <video id="animeVideo" controls controlsList="nodownload"></video>
-  <div class="player-controls">
-    <span class="material-icons like-button" id="likeBtn" onclick="toggleLike()">favorite_border</span>
-    <button onclick="backToHome()">Back</button>
-  </div>
-</section>
+<script>
+const images = [
+  { id: "1", title: "Sunset Beach", url: "https://i.pinimg.com/originals/4d/93/b2/4d93b25168104e05ad7bfe5b8c84aa0d.jpg" },
+  { id: "2", title: "Mountain Peak", url: "https://i.pinimg.com/originals/1e/3b/f4/1e3bf4a4b87c8427c8c7bb95310b4588.jpg" },
+  { id: "3", title: "Forest Mist", url: "https://i.pinimg.com/originals/fc/79/96/fc7996638e1176d86f46e841d152ca6b.jpg" },
+  // ➕ Add more images here
+];
 
-  </main>  <nav class="bottom-nav">
-    <button class="tab-btn active" onclick="switchTab(event, 'home')"><span class="material-icons">home</span>Home</button>
-    <button class="tab-btn" onclick="switchTab(event, 'search')"><span class="material-icons">search</span>Search</button>
-    <button class="tab-btn" onclick="switchTab(event, 'about')"><span class="material-icons">info</span>About</button>
-  </nav>  <script>
-    const videoList = [
-      {
-        title: 'Sample Anime Episode 1',
-        src: 'https://jmp.sh/s/mpsoFOvp4E1ljpD8y5Hq',
-        thumbnail: 'https://i.imgur.com/4D7Dn74.jpg'
-      },
-      {
-        title: 'Sample Anime Episode 2',
-        src: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/bee.webm',
-        thumbnail: 'https://i.imgur.com/Ok3fT6v.jpg'
-      },
-{
-        title: 'Sample Anime Episode 1',
-        src: 'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm',
-        thumbnail: 'https://i.imgur.com/4D7Dn74.jpg'
-      },
-    ];
+let favourites = JSON.parse(localStorage.getItem('favs') || '[]');
 
-    let currentVideo = null;
-    let favourites = JSON.parse(localStorage.getItem('animeFavs')) || [];
+function switchTab(tab) {
+  document.querySelectorAll('.tabPage').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
+  document.getElementById(tab + 'Tab').style.display = 'block';
+  document.querySelector(`nav button[onclick="switchTab('${tab}')"]`).classList.add('active');
+  document.getElementById('viewerPage').style.display = 'none';
+  document.getElementById('pageTitle').innerText = {
+    home: 'Photo Gallery',
+    search: 'Search',
+    favourites: 'Favourites'
+  }[tab];
+  if (tab === 'favourites') loadFavourites();
+}
 
-    function loadHomeVideos() {
-      const grid = document.getElementById('homeGrid');
-      grid.innerHTML = '';
-      videoList.forEach(video => {
-        const card = document.createElement('div');
-        card.className = 'video-card';
-        card.innerHTML = `
-          <img src='${video.thumbnail}' class='thumbnail'>
-          <div class='video-info'>
-            <h3 class='video-title'>${video.title}</h3>
-            <p class='video-description'>Click to watch</p>
-          </div>`;
-        card.onclick = () => goToVideo(video.title, video.src, video.thumbnail);
-        grid.appendChild(card);
-      });
-    }
+function createCard(img) {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.onclick = () => viewImage(img.id);
+  card.innerHTML = `
+    <img src="${img.url}" alt="${img.title}" />
+    <div class="title">${img.title}
+      <button class="fav-btn ${favourites.includes(img.id) ? 'active' : ''}" onclick="event.stopPropagation(); toggleFav('${img.id}', this)">♡</button>
+    </div>
+  `;
+  return card;
+}
 
-    function switchTab(evt, tabId) {
-      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      evt.currentTarget.classList.add('active');
-    }
+function loadGallery() {
+  const homeGallery = document.getElementById('homeGallery');
+  homeGallery.innerHTML = '';
+  images.forEach(img => homeGallery.appendChild(createCard(img)));
+}
+loadGallery();
 
-    function goToVideo(title, src, thumbnail) {
-      currentVideo = { title, src };
-      document.getElementById('videoTitle').textContent = title;
-      const video = document.getElementById('animeVideo');
-      video.src = src;
-      video.poster = thumbnail;
-      document.getElementById('videoPage').classList.add('active');
-      document.querySelectorAll('.tab-content').forEach(tab => {
-        if (tab.id !== 'videoPage') tab.classList.remove('active');
-      });
-      updateLikeIcon();
-    }
+function toggleFav(id, btn) {
+  if (favourites.includes(id)) {
+    favourites = favourites.filter(f => f !== id);
+    btn.classList.remove('active');
+  } else {
+    favourites.push(id);
+    btn.classList.add('active');
+  }
+  localStorage.setItem('favs', JSON.stringify(favourites));
+}
 
-    function toggleLike() {
-      const title = currentVideo.title;
-      const index = favourites.indexOf(title);
-      if (index === -1) {
-        favourites.push(title);
-      } else {
-        favourites.splice(index, 1);
-      }
-      localStorage.setItem('animeFavs', JSON.stringify(favourites));
-      updateLikeIcon();
-      updateFavourites();
-    }
+function loadFavourites() {
+  const favGallery = document.getElementById('favouriteGallery');
+  favGallery.innerHTML = '';
+  images.filter(img => favourites.includes(img.id)).forEach(img => {
+    favGallery.appendChild(createCard(img));
+  });
+}
 
-    function updateLikeIcon() {
-      const btn = document.getElementById('likeBtn');
-      if (favourites.includes(currentVideo.title)) {
-        btn.classList.add('liked');
-        btn.textContent = 'favorite';
-      } else {
-        btn.classList.remove('liked');
-        btn.textContent = 'favorite_border';
-      }
-    }
+function viewImage(id) {
+  const img = images.find(i => i.id === id);
+  document.getElementById('viewerPage').style.display = 'block';
+  document.querySelectorAll('.tabPage').forEach(el => el.style.display = 'none');
+  document.getElementById('pageTitle').innerText = img.title;
+  document.getElementById('viewerImage').src = img.url;
+  document.getElementById('viewerTitle').innerText = img.title;
+  document.getElementById('viewerFavBtn').dataset.id = id;
+  document.getElementById('viewerFavBtn').classList.toggle('active', favourites.includes(id));
 
-    function updateFavourites() {
-      const list = document.getElementById('favouritesList');
-      list.innerHTML = favourites.map(title => `<li>${title}</li>`).join('');
-    }
+  const suggestions = images.filter(i => i.id !== id).slice(0, 4);
+  const suggestionContainer = document.getElementById('suggestionsGallery');
+  suggestionContainer.innerHTML = '';
+  suggestions.forEach(s => suggestionContainer.appendChild(createCard(s)));
+}
 
-    function searchVideos() {
-      const query = document.getElementById('searchInput').value.toLowerCase();
-      const results = document.getElementById('searchResults');
-      results.innerHTML = '';
-      videoList.forEach(video => {
-        if (video.title.toLowerCase().includes(query)) {
-          const card = document.createElement('div');
-          card.className = 'video-card';
-          card.innerHTML = `
-            <img src='${video.thumbnail}' class='thumbnail'>
-            <div class='video-info'>
-              <h3 class='video-title'>${video.title}</h3>
-              <p class='video-description'>Click to watch</p>
-            </div>`;
-          card.onclick = () => goToVideo(video.title, video.src, video.thumbnail);
-          results.appendChild(card);
-        }
-      });
-    }
+function toggleViewerFav() {
+  const id = document.getElementById('viewerFavBtn').dataset.id;
+  const btn = document.getElementById('viewerFavBtn');
+  toggleFav(id, btn);
+}
 
-    function backToHome() {
-      document.getElementById('videoPage').classList.remove('active');
-      document.getElementById('home').classList.add('active');
-    }
+function backToHome() {
+  document.getElementById('viewerPage').style.display = 'none';
+  switchTab('home');
+}
 
-    // Initial load
-    loadHomeVideos();
-    updateFavourites();
-  </script></body>
-</html>
+document.getElementById('searchInput').addEventListener('input', e => {
+  const val = e.target.value.toLowerCase();
+  const res = images.filter(img => img.title.toLowerCase().includes(val));
+  const resultsContainer = document.getElementById('searchResults');
+  resultsContainer.innerHTML = '';
+  res.forEach(img => resultsContainer.appendChild(createCard(img)));
+});
+</script>
 
-  
+</body>
+    </html>
